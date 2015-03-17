@@ -1,6 +1,6 @@
 if (hasInterface) then // Make sure only the client or host executes this. A server won't execute it.
 {
-		// Time until next restart by IT07
+		// [ScarCode] Server restart warnings by IT07
 		private["_SC_restartIntvlHours"];
 		/////// CONFIG /////// 
 		// Please edit the 3 lines below to your likings
