@@ -1,4 +1,8 @@
-/////// C0de by IT07 from ScarCode ///////
+////////////////////////////////////////////
+/////// FileName: SC_restartTime.sqf ///////
+/////// Author: IT07 ///////////////////////
+////////////////////////////////////////////
+
 SC_restartH = _this select 0; // Select interval from init.sqf
 SC_restartWarnTop = _this select 1; // Select top message from init.sqf
 SC_showRestartHintTime = _this select 2; // Select the "always show hint option"
