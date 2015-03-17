@@ -1,5 +1,3 @@
-// The code in this repository has been developed by IT07 from ScarCode
-
 ###ArmA 3 Server restart warning system by IT07
 
 Ok let me get this straight: it is really hard to explain to someone how to install a script if you want to do it right. <br /> So please be patient and read it all before you start messaging me: "it doesn't work". Thank you :)
