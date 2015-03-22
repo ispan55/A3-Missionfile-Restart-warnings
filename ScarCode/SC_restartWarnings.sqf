@@ -10,14 +10,14 @@
 /// Global configuration
 _restartWarningTxt = "== WARNING =="; // What the first line will say for all restart warnings
 _restartMode = "scheduled"; // OPTIONS: "dynamic" and "scheduled". Case insensitive
+_warningSchedule = [120,30,20,15,10,5,2,1]; // At how many minutes should warnings be given
 
 /////// Configuration for DYNAMIC restarts
 _restartInterval = 4; // Server uptime in hours | DEFAULT: 4
-_warningSchedule = [120,30,20,15,10,5,2,1]; // At how many minutes should warnings be given
 
 /////// Configuration for SCHEDULED restarts (24h format)
-// CAUTION! The schedule above does NOT actually restart your server! It is there so tell the script WHEN your server will restart on schedule.
 _restartSchedule = [[4,30],[8,30],[12,00],[16,00],[21,00],[24,00]]; // Example config for 4-hour interval round the clock.
+// CAUTION! The schedule above does NOT actually restart your server! It is there so tell the script WHEN your server will restart on schedule.
 /////// Schedule examples:
 // _restartSchedule = []; // No schedule
 // _restartSchedule = [[12,00]]; Only restart at 12 in the afternoon
