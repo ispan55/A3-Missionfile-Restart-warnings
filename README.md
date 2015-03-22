@@ -29,3 +29,6 @@ I know from my days as an admin that this script is very very welcome in case
 any other restart warning program failed to do it's job for whatever reason.
 Name BattlEye for example.... "Failed to connect to BE Master" and all those irritating errors caused messages to not show up ingame or delayed.
 That time is over now! Please, take my script and enjoy it.
+
+Donate link:
+http://scarcode.com/donate/
