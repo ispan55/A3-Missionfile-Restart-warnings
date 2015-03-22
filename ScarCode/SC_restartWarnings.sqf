@@ -59,7 +59,7 @@ if(_this select 0) then // Only execute if this script was launched with [true]
 					//_timeLeft = round(_restartInterval * 60 - (time / 60)); // For testing in editor
 					
 					_find = _warningSchedule find _timeLeft;
-					hintSilent parseText format["%1 Minutes left<br /><br />Interval: %2<br /><br />Schedule:<br />%3", _timeLeft, _restartInterval, _warningSchedule];
+					//hintSilent parseText format["%1 Minutes left<br /><br />Interval: %2<br /><br />Schedule:<br />%3", _timeLeft, _restartInterval, _warningSchedule];
 					if(_find > -1) then 
 						{ 
 							[_warningSchedule select _find, _restartWarningTxt] spawn SC_fnc_giveWarning;
@@ -155,7 +155,7 @@ if(_this select 0) then // Only execute if this script was launched with [true]
 												
 											_find = _warningSchedule find _timeLeft;
 												
-											hintSilent parseText format["Minutes left:<br />%1<br /><br />Next on schedule:<br />%2<br /><br />Started at:<br />%3<br /><br />Converted schedule:<br />%4<br /><br />Warning schedule:<br />%5", _timeLeft, _nextRestart, _startTime, _convertedSchedule, _warningSchedule];
+											//hintSilent parseText format["Minutes left:<br />%1<br /><br />Next on schedule:<br />%2<br /><br />Started at:<br />%3<br /><br />Converted schedule:<br />%4<br /><br />Warning schedule:<br />%5", _timeLeft, _nextRestart, _startTime, _convertedSchedule, _warningSchedule];
 												
 											if(_find > -1) then 
 											{ 
