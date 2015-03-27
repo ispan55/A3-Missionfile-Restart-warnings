@@ -9,8 +9,8 @@
 
 /// Global configuration
 _restartWarningTxt = "== WARNING =="; // What the first line will say for all restart warnings
-_restartMode = "dynamic"; // OPTIONS: "dynamic" and "scheduled". Case insensitive
-_warningSchedule = [120,30,20,15,10,5,2,1]; // At how many minutes should warnings be given
+_restartMode = "scheduled"; // OPTIONS: "dynamic" and "scheduled". Case insensitive
+_warningSchedule = [120,30,20,15,10,5,2,1]; // At how many minutes before restart will warnings be shown
 _enableDebug = false; // DEFAULT: false. Will show hintSilent with some info if true
 
 /////// Configuration for DYNAMIC restarts
@@ -18,7 +18,7 @@ _restartInterval = 4; // Server uptime in hours | DEFAULT: 4 | MINIMAL: 0.5; (th
 
 /////// Configuration for SCHEDULED restarts (24h format)
 /// If not using scheduled restarts, please ingore the line below or put two slashes in front of the line. Both work.
-_restartSchedule = [[4,00],[8,00],[12,00],[16,00],[21,00],[24,00]]; // Used to tell the script when your server will restart
+_restartSchedule = [[0,00],[4,00],[8,00],[12,00],[16,00],[20,00]]; // Used to tell the script when your server will restart
 /// SCHEDULE EXAMPLES:
 //_restartSchedule = [[0,30],[2,30],[4,30],[6,30],[8,30],[10,30],[12,30],[14,30],[16,30],[18,30],[20,30],[22,30]]; // Restart every 2 hours and 30 minutes past the hour
 //_restartSchedule = [[0,15],[3,05],[6,10],[7,43],[8,33]]; // A very messy schedule. But it works.
@@ -30,9 +30,8 @@ _restartSchedule = [[4,00],[8,00],[12,00],[16,00],[21,00],[24,00]]; // Used to t
 ///////  All of the magic is below this line :D  //////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-
 /////////////////////////////////////////////////////////////////////////
-///// Issues: None that I know of...
+///// Issues: https://github.com/IT07/A3-Missionfile-Restart-warnings/issues/
 /////////////////////////////////////////////////////////////////////////
 
 if(_this select 0) then // Only execute if this script was launched with [true]
@@ -43,10 +42,24 @@ if(_this select 0) then // Only execute if this script was launched with [true]
 	///////  CODE FOR BOTH MODES  ///////////////
 	/////////////////////////////////////////////
 	
+	SC_fnc_giveWarning =
+	{
+		_minutesLeft = _this select 0;
+		_restartWarningTxt = _this select 1;
+		_minuteOrMinutes = "s";
+		if(_minutesLeft == 1) then { _minuteOrMinutes = ""; };
+		_notif =
+		[
+			[
+				[format["%1", _restartWarningTxt],"<t align = 'center' shadow = '1' size = '0.8' color ='#E44646' font='PuristaBold'>%1</t><br />"],
+				[format["Next restart in %1 minute%2....", _minutesLeft, _minuteOrMinutes],"<t align = 'center' shadow = '1' size = '0.6'>%1</t><br/>"]
+			]	
+		] spawn BIS_fnc_typeText;
+	};
+	
 	SC_fnc_showError =
 			{
 				_error = _this select 0;
-				private["_notif"];
 				_notif =
 				[
 					[
@@ -78,41 +91,27 @@ if(_this select 0) then // Only execute if this script was launched with [true]
 					_timeLeft = round(_restartInterval * 60 - (serverTime / 60)); // For live use
 					//_timeLeft = round(_restartInterval * 60 - (time / 60)); // For testing in editor
 					
+					if(_timeLeft < 0) exitWith { systemChat"_timeLeft < 0"; };
+					
 					_find = _warningSchedule find _timeLeft;
 					
 					if(_enableDebug) then 
 					{
-						hintSilent parseText format["%1 Minutes left<br /><br />Interval: %2<br /><br />Schedule:<br />%3", _timeLeft, _restartInterval, _warningSchedule];
+						hintSilent parseText format["%1 Minutes left<br /><br />Interval: %2<br /><br />Warning Schedule:<br />%3<br /><br />Time passed:<br />%4", _timeLeft, _restartInterval, _warningSchedule, serverTime];
 					};
 					
 					if(_find > -1) then 
-						{ 
-							[_warningSchedule select _find, _restartWarningTxt] spawn SC_fnc_giveWarning;
-							_warningSchedule = _warningSchedule - [_warningSchedule select _find];					
-						};
-					sleep 1;
+					{ 
+						[_warningSchedule select _find, _restartWarningTxt] spawn SC_fnc_giveWarning;
+						_warningSchedule = _warningSchedule - [_warningSchedule select _find];					
+					};
+				sleep 0.5;
 				};
 			};
-	
-			SC_fnc_giveWarning =
-			{
-				_found = _this select 0;
-				_restartWarningTxt = _this select 1;
-				_minuteOrMinutes = "s";
-				if(_found < 2) then { _minuteOrMinutes = ""; };
-				private["_notif"];
-				_notif =
-				[
-					[
-						[format["%1", _restartWarningTxt],"<t align = 'center' shadow = '1' size = '0.8' color ='#E44646' font='PuristaBold'>%1</t><br />"],
-						[format["Next restart in %1 minute%2....", _found, _minuteOrMinutes],"<t align = 'center' shadow = '1' size = '0.6'>%1</t><br/>"]
-					]	
-				] spawn BIS_fnc_typeText;
-			};	
 			
 			waitUntil { (!isNull Player); (alive Player); (player == player); !(isNull (findDisplay 46)); (speed player > 0.1) };
 			
-			if(count _warningSchedule > 0 or _restartInterval > 0.4) then // Only start if the warning schedule isn't empty and if restartInterval is valid
+			if(count _warningSchedule > 0 and _restartInterval > 0.4) then // Only start if the warning schedule isn't empty and if restartInterval is valid
 			{
 				[_restartInterval, _warningSchedule, _restartWarningTxt, _enableDebug] spawn SC_fnc_timeCheck;
 			};
@@ -154,15 +153,18 @@ if(_this select 0) then // Only execute if this script was launched with [true]
 					_number = _number + 1;
 					if((_number) == (count _restartSchedule)) exitWith
 					{
-						[_convertedSchedule, _warningSchedule, _restartWarningTxt, _enableDebug] spawn
+						[_restartSchedule, _convertedSchedule, _warningSchedule, _restartWarningTxt, _enableDebug] spawn
 						{
-							_convertedSchedule = _this select 0;
-							_warningSchedule = _this select 1;
-							_restartWarningTxt = _this select 2;
-							_enableDebug = _this select 3;
+							_restartSchedule = _this select 0;
+							_convertedSchedule = _this select 1;
+							_warningSchedule = _this select 2;
+							_restartWarningTxt = _this select 3;
+							_enableDebug = _this select 4;
 							
 							_startTime = ((missionStart select 3) * 60) + (missionStart select 4); // For live use
-							//_startTime = (15 * 60) + (45); // For testing in editor
+							_startTimeReal = format["%1:%2", missionStart select 3, missionStart select 4]; // For live use
+							//_startTime = (9 * 60) + (27); // For testing in editor
+							//_startTimeReal = "9:27"; // For testing in the editor
 							
 							_count = 0;
 							while { true } do
@@ -174,33 +176,36 @@ if(_this select 0) then // Only execute if this script was launched with [true]
 								{
 									_nextRestart = _convertedSchedule select _find;
 										
-									[_nextRestart, _startTime, _convertedSchedule, _warningSchedule, _restartWarningTxt, _enableDebug] spawn 
+									[_nextRestart, _startTime, _startTimeReal, _restartSchedule, _convertedSchedule, _warningSchedule, _restartWarningTxt, _enableDebug] spawn 
 									{
 										_nextRestart = _this select 0;
 										_startTime = _this select 1;
-										_convertedSchedule = _this select 2;
-										_warningSchedule = _this select 3;
-										_restartWarningTxt = _this select 4;
-										_enableDebug = _this select 5;
+										_startTimeReal = _this select 2;
+										_restartSchedule = _this select 3;
+										_convertedSchedule = _this select 4;
+										_warningSchedule = _this select 5;
+										_restartWarningTxt = _this select 6;
+										_enableDebug = _this select 7;
 				
-										while { count _warningSchedule > 0 } do
-										{
-											_timeLeft = round(_nextRestart - _startTime - serverTime / 60);
+										while { count _warningSchedule > -1 } do
+										{	
+											_timeLeft = floor(_nextRestart - _startTime - serverTime / 60); // For live use
 											//_timeLeft = round(_nextRestart - _startTime - time / 60); // For testing in editor
-												
-											_find = _warningSchedule find _timeLeft;
-												
+											
+											if(_timeLeft == 0) exitWith { hint""; };
+											
 											if(_enableDebug) then 
 											{
-												hintSilent parseText format["Minutes left:<br />%1<br /><br />Next on schedule:<br />%2<br /><br />Started at:<br />%3<br /><br />Converted schedule:<br />%4<br /><br />Warning schedule:<br />%5", _timeLeft, _nextRestart, _startTime, _convertedSchedule, _warningSchedule];
+												hintSilent parseText format["Minutes left:<br />%1<br /><br />Next on schedule:<br />%2<br /><br />Started at:<br />%3<br /><br />Original schedule:<br />%4<br /><br />Converted schedule:<br />%5<br /><br />Warning schedule:<br />%6<br /><br />Time passed:<br />%7", _timeLeft, _nextRestart, _startTimeReal, _restartSchedule, _convertedSchedule, _warningSchedule, serverTime];
 											};
 											
+											_find = _warningSchedule find _timeLeft;
 											if(_find > -1) then 
 											{ 
 												[_warningSchedule select _find, _restartWarningTxt] spawn SC_fnc_giveWarning;
 												_warningSchedule = _warningSchedule - [_warningSchedule select _find];					
 											};
-											sleep 1;
+										sleep 0.5;
 										};
 									};
 								};
@@ -215,22 +220,6 @@ if(_this select 0) then // Only execute if this script was launched with [true]
 			if(count _restartSchedule > 0 and count _warningSchedule > 0) then // Only start if the arrays are not empty
 			{
 				[_restartSchedule, _warningSchedule, _restartWarningTxt, _enableDebug] spawn SC_fnc_timeCheck;
-			};
-			
-			SC_fnc_giveWarning =
-			{
-				_found = _this select 0;
-				_restartWarningTxt = _this select 1;
-				_minuteOrMinutes = "s";
-				if(_found < 2) then { _minuteOrMinutes = ""; };
-				private["_notif"];
-				_notif =
-				[
-					[
-						[format["%1", _restartWarningTxt],"<t align = 'center' shadow = '1' size = '0.8' color ='#E44646' font='PuristaBold'>%1</t><br />"],
-						[format["Next restart in %1 minute%2....", _found, _minuteOrMinutes],"<t align = 'center' shadow = '1' size = '0.6'>%1</t><br/>"]
-					]	
-				] spawn BIS_fnc_typeText;
 			};
 		};
 		
