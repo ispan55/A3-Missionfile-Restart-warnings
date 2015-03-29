@@ -11,16 +11,16 @@ http://feedback.arma3.com/view.php?id=23373 <br />
 [MOVED] SC_fnc_giveWarning is now global to both restart modes <br />
 Only update to this version if you are experiencing issues. <br />
 <br />
-####Changelog 02037_BETA (3rd release) <br />
+####Changelog `02037_BETA (3rd release)` <br />
 [ADDED] Option to enable debug info <br />
 [FIXED] hintSilent always there <br />
 [NEW] Additional safety checks to make script even more fail-safe <br />
 <br />
-####Changelog 02026_BETA (2nd release) <br />
+####Changelog `02026_BETA (2nd release)` <br />
 [ADDED] Support for Scheduled restarts <br />
 [ADDED] Configurable times for warnings to show <br />
 [ADDED] Even more awesomeness <br />
 [FIXED] Too much code <br />
 <br />
-####Changelog 01714_BETA (1st release) <br />
+####Changelog `01714_BETA (1st release)` <br />
 [FIXED] Timer would not stop if time hit zero
