@@ -1,9 +1,8 @@
 if (hasInterface) then
 {
-		////////////////////////////////////////////////////////////////////////////////
-		///////  [ScarCode] Missionfile-based server restart warnings  /////////////////
-		///////  Author: IT07 //////////////////////////////////////////////////////////
-		///////  For configuration, please open ScarCode\SC_restartWarnings.sqf  ///////
-		////////////////////////////////////////////////////////////////////////////////
-		[true] ExecVM "ScarCode\SC_restartWarnings.sqf";
-	};
+	/*
+		Author: IT07 | Script Name: Missionfile-based server restart warnings
+		Version: 02039_PATCH1
+	*/
+	[] ExecVM "ScarCode\sRestartWarnings.sqf";
+};

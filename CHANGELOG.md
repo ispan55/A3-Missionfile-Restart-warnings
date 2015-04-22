@@ -1,6 +1,7 @@
-`Version: 02048_BETA (support for scheduled restarts has been removed due to discovery of limitations in ArmA 3. Sorry.` <br /><br />
-
-####Changelog `02048_BETA (latest)` <br />
+####Changelog `02039_PATCH1 (latest)` <br />
+[FIXED] Huge security problems <br />
+<br />
+####Changelog `02048_BETA (5th release)` <br />
 [REMOVED] Support for scheduled restart due to missing ArmA 3 feature. <br />
 Please support this issue:
 http://feedback.arma3.com/view.php?id=23373 <br />
