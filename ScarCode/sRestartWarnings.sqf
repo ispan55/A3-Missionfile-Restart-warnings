@@ -20,7 +20,7 @@ SC_fnc_showError = compileFinal preprocessFileLineNumbers "ScarCode\functions_SC
 SC_fnc_timeCheck = compileFinal preprocessFileLineNumbers "ScarCode\functions_SC\sRestart_fnc_timeCheck.sqf";
 
 waitUntil { sleep 0.1; speed player > 0.1 };
-systemChat"yup";
+
 if (count _warningSchedule > 0 and _restartInterval > 0) then // Only start if the warning schedule isn't empty and if restartInterval is valid
 {
 	[_restartInterval, _warningSchedule, _restartWarningTxt, _enableDebug] spawn SC_fnc_timeCheck;
